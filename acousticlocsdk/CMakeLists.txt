@@ -16,10 +16,28 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+# Searches for a specified prebuilt library and stores the path as a
+# variable. Because CMake includes system libraries in the search path by
+# default, you only need to specify the name of the public NDK library
+# you want to add. CMake verifies that the library exists before
+# completing its build.
+
+find_library( # Sets the name of the path variable.
+        log-lib
+
+        # Specifies the name of the NDK library that
+        # you want CMake to locate.
+        log)
+
+
+# Specifies libraries CMake should link to your target library. You
+# can link multiple libraries, such as libraries you define in this
+# build script, prebuilt third-party libraries, or system libraries.
+
 ### INCLUDE OBOE LIBRARY ###
 
 # Set the path to the Oboe library directory
-set (OBOE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../oboe)
+set (OBOE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../oboe)
 
 # Add the Oboe library as a subproject. Since Oboe is an out-of-tree source library we must also
 # specify a binary directory
@@ -29,6 +47,22 @@ add_subdirectory(${OBOE_DIR} ./oboe-bin)
 include_directories(${OBOE_DIR}/include)
 
 ### END OBOE INCLUDE SECTION ###
+
+
+### INCLUDE LIBSNDFILE LIBRARY ###
+
+# Set the path to the LIBSNDFILE library directory
+set (LIB_SND_FILE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../libsndfile)
+
+# Add the LIBSNDFILE library as a subproject. Since Oboe is an out-of-tree source library we must also
+# specify a binary directory
+add_subdirectory(${LIB_SND_FILE_DIR} ./sndfile-bin)
+
+# Specify the path to the LIBSNDFILE header files.
+include_directories(${LIB_SND_FILE_DIR}/src)
+
+### END LIBSNDFILE INCLUDE SECTION ###
+
 
 # Debug utilities
 set (DEBUG_UTILS_PATH "./src/main/cpp/debug-utils")
@@ -42,19 +76,27 @@ file (GLOB_RECURSE ACOUSTICLOCSDK_SOURCES
     ${ACOUSTICLOCSDK_DIR}/AcousticsEngine.cpp
 )
 
+# Creates and names a library, sets it as either STATIC
+# or SHARED, and provides the relative paths to its source code.
+# You can define multiple libraries, and CMake builds them for you.
+# Gradle automatically packages shared libraries with your APK.
+
 # Build the libacoustic-loc-sdk library
-add_library(acousticlocsdk
-    SHARED
+add_library( # Sets the name of the library.
+        acousticlocsdk
+
+        # Sets the library as a shared library.
+        SHARED
+
+        # Provides a relative path to your source file(s).
         ${DEBUG_UTILS_SOURCES}
         ${ACOUSTICLOCSDK_SOURCES})
 
 # Specify the libraries needed for acoustic-loc-sdk
 target_link_libraries(acousticlocsdk
-    PRIVATE
+        ${log-lib}
         oboe
-        android
-        atomic
-        log)
+        sndfile)
 
 # Enable optimization flags: if having problems with source level debugging,
 # disable -Ofast ( and debug ), re-enable after done debugging.

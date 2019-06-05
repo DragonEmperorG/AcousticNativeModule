@@ -28,6 +28,8 @@ extern "C" {
 JNIEXPORT bool JNICALL
 Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_create(JNIEnv *env,
                                                            jclass) {
+    LOGD("create AcousticsEngine");
+
     if (engine == nullptr) {
         engine = new AcousticsEngine();
     }
@@ -120,5 +122,19 @@ Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_isAAudioSupported(
     }
     return static_cast<jboolean>(engine->isAAudioSupported() ? JNI_TRUE
                                                              : JNI_FALSE);
+}
+
+JNIEXPORT void JNICALL
+Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_setRecordAudioOn(
+        JNIEnv *env, jclass, jboolean isRecordAudioOn) {
+    if (engine == nullptr) {
+        LOGE(
+                "Engine is null, you must call createEngine before calling this "
+                "method");
+        return;
+    }
+
+    LOGD("engine->setRecordAudioOn(isRecordAudioOn);");
+    engine->setRecordAudioOn(isRecordAudioOn);
 }
 }

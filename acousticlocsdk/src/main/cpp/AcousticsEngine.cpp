@@ -33,6 +33,7 @@ AcousticsEngine::AcousticsEngine() {
 
 AcousticsEngine::~AcousticsEngine() {
     stopStream(mPlayStream);
+
     stopStream(mRecordingStream);
 
     closeStream(mPlayStream);
@@ -133,9 +134,18 @@ void AcousticsEngine::openRecordingStream() {
         assert(mRecordingStream->getSampleRate() == mSampleRate);
         assert(mRecordingStream->getFormat() == oboe::AudioFormat::I16);
 
+        mSampleRate = mRecordingStream->getSampleRate();
+        mFormat = mRecordingStream->getFormat();
+
+        LOGV(TAG, "openRecordingStream(): mSampleRate = ");
+        LOGV(TAG, std::to_string(mSampleRate).c_str());
+
+        LOGV(TAG, "openRecordingStream(): mFormat = ");
+        LOGV(TAG, oboe::convertToText(mFormat));
+
         warnIfNotLowLatency(mRecordingStream);
     } else {
-        LOGE("Failed to create recording stream. Error: %s",
+        LOGE(TAG, "Failed to create recording stream. Error: %s",
              oboe::convertToText(result));
     }
 }
@@ -232,11 +242,16 @@ void AcousticsEngine::startStream(oboe::AudioStream *stream) {
 }
 
 void AcousticsEngine::stopStream(oboe::AudioStream *stream) {
+
+    LOGD(TAG, "stopStream(): ");
+
     if (stream) {
         oboe::Result result = stream->stop(0L);
         if (result != oboe::Result::OK) {
             LOGE("Error stopping stream. %s", oboe::convertToText(result));
         }
+        LOGW(TAG, "stopStream(): mTotalSamples = ");
+//        LOGW(TAG, std::to_string(mSoundRecording.getTotalSamples()).c_str());
     }
 }
 
@@ -370,4 +385,80 @@ void AcousticsEngine::onErrorAfterClose(oboe::AudioStream *oboeStream,
     LOGE("%s stream Error after close: %s",
          oboe::convertToText(oboeStream->getDirection()),
          oboe::convertToText(error));
+}
+
+void AcousticsEngine::setRecordAudioOn(bool isRecordAudioOn) {
+    if (isRecordAudioOn != mIsRecordAudioOn) {
+        mIsRecordAudioOn = isRecordAudioOn;
+
+        if (isRecordAudioOn) {
+            startRecordAudio();
+        } else {
+            stopRecordAudio();
+        }
+    }
+}
+
+/**
+ * Start Recording Audio
+ *
+ * @param
+ * @param
+ */
+void AcousticsEngine::startRecordAudio() {
+    LOGE("*** Start Recording Audio ***");
+    openRecordingStream();
+
+    if (mRecordingStream) {
+        startStream(mRecordingStream);
+    } else {
+        LOGE("Failed to create recording (%p) stream", mRecordingStream);
+        closeRecordingStream();
+    }
+
+    constexpr int kMillisecondsToRecord = 2;
+    const int32_t requestedFrame = (int32_t)(kMillisecondsToRecord
+            * (mRecordingStream->getSampleRate() / oboe::kMillisPerSecond));
+    int16_t recorderBuffer[requestedFrame];
+
+    constexpr int64_t kTimeoutValue = 3 * oboe::kNanosPerMillisecond;
+
+    int framesRead = 0;
+    do {
+        auto result = mRecordingStream->read(recorderBuffer,
+                mRecordingStream->getBufferSizeInFrames(), 0);
+        if (result != oboe::Result::OK) break;
+        framesRead = result.value();
+    } while (framesRead != 0);
+
+    while (mIsRecordAudioOn) {
+        auto result = mRecordingStream->read(recorderBuffer, mRecordingStream->getBufferSizeInFrames(),
+                                             kTimeoutValue);
+        if (result != oboe::Result::OK) {
+            LOGD("Read %d frames", result.value());
+        } else {
+            LOGE("Error reading stream: %s", oboe::convertToText(result.error()));
+        }
+    }
+}
+
+/**
+ * Stop Recording Audio
+ *
+ * @param
+ * @param
+ */
+void AcousticsEngine::stopRecordAudio() {
+    closeRecordingStream();
+}
+
+/**
+ * Close recording stream.
+ * @param stream the stream to close
+ */
+void AcousticsEngine::closeRecordingStream() {
+    if (mRecordingStream != nullptr) {
+        closeStream(mRecordingStream);
+        mRecordingStream = nullptr;
+    }
 }

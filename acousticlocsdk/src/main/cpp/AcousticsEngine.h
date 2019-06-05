@@ -29,6 +29,8 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     void setRecordingDeviceId(int32_t deviceId);
     void setPlaybackDeviceId(int32_t deviceId);
     void setEffectOn(bool isOn);
+    void setRecordAudioOn(bool isRecordAudioOn);
+
 
     /*
      * oboe::AudioStreamCallback interface implementation
@@ -42,7 +44,10 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     bool isAAudioSupported(void);
 
    private:
+    const char* TAG = "AcousticsEngine:: %s";
+
     bool mIsEffectOn = false;
+    bool mIsRecordAudioOn = false;
     uint64_t mProcessedFrameCount = 0;
     uint64_t mSystemStartupFrames = 0;
     int32_t mRecordingDeviceId = oboe::kUnspecified;
@@ -51,12 +56,21 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     int32_t mSampleRate = oboe::kUnspecified;
     int32_t mInputChannelCount = oboe::ChannelCount::Stereo;
     int32_t mOutputChannelCount = oboe::ChannelCount::Stereo;
+
+    oboe::AudioApi mAudioApi = oboe::AudioApi::AAudio;
     oboe::AudioStream *mRecordingStream = nullptr;
     oboe::AudioStream *mPlayStream = nullptr;
+//    SoundRecording mSoundRecording;
+//    SndfileHandle sndfileHandle;
+
     std::mutex mRestartingLock;
-    oboe::AudioApi mAudioApi = oboe::AudioApi::AAudio;
+
+    void startRecordAudio();
+    void stopRecordAudio();
 
     void openRecordingStream();
+    void closeRecordingStream();
+
     void openPlaybackStream();
 
     void startStream(oboe::AudioStream *stream);

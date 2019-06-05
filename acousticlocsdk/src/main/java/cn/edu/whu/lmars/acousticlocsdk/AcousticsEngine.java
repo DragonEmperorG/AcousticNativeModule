@@ -10,11 +10,12 @@ public enum AcousticsEngine {
     }
 
     // Native methods
-    static native boolean create();
-    static native boolean isAAudioSupported();
-    static native boolean setAPI(int apiType);
-    static native void setEffectOn(boolean isEffectOn);
-    static native void setRecordingDeviceId(int deviceId);
-    static native void setPlaybackDeviceId(int deviceId);
-    static native void delete();
+    public static native boolean create();
+    public static native boolean isAAudioSupported();
+    public static native boolean setAPI(int apiType);
+    public static native void setEffectOn(boolean isEffectOn);
+    public static native void setRecordAudioOn(boolean isRecordAudioOn);
+    public static native void setRecordingDeviceId(int deviceId);
+    public static native void setPlaybackDeviceId(int deviceId);
+    public static native void delete();
 }
