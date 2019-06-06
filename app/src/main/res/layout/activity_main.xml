@@ -7,22 +7,69 @@
     tools:context="cn.edu.whu.lmars.acousticloc.MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ToggleButton
-        android:id="@+id/button_toggle_audio_recorder"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/recorderControlLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:checked="false"
-        android:textOff="@string/start_record_audio"
-        android:textOn="@string/stop_record_audio"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="parent" >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/button_audio_recorder_tag"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/ic_bookmark_red_a700_24dp"
+                android:onClick="completeRecordAudio" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+                <ToggleButton
+                    android:id="@+id/button_toggle_audio_recorder"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/toggle_button_recording_pause"
+                    android:checked="false"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn="" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/button_audio_recorder_complete"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/ic_stop_red_900_24dp"
+                android:onClick="completeRecordAudio" />
+        </LinearLayout>
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

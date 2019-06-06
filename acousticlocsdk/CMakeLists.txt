@@ -65,15 +65,18 @@ include_directories(${LIB_SND_FILE_DIR}/src)
 
 
 # Debug utilities
-set (DEBUG_UTILS_PATH "./src/main/cpp/debug-utils")
-set (DEBUG_UTILS_SOURCES ${DEBUG_UTILS_PATH}/trace.cpp)
-include_directories(${DEBUG_UTILS_PATH})
+set (UTILS_PATH "src/main/cpp/utils")
+set (UTILS_SOURCES ${UTILS_PATH}/trace.cpp)
+include_directories(${UTILS_PATH})
 
 # App specific sources
 set (ACOUSTICLOCSDK_DIR src/main/cpp)
 file (GLOB_RECURSE ACOUSTICLOCSDK_SOURCES
     ${ACOUSTICLOCSDK_DIR}/jni_bridge.cpp
     ${ACOUSTICLOCSDK_DIR}/AcousticsEngine.cpp
+    ${ACOUSTICLOCSDK_DIR}/recorder/SoundRecording.cpp
+    ${ACOUSTICLOCSDK_DIR}/recorder/RecordingCallback.cpp
+    ${ACOUSTICLOCSDK_DIR}/player/PlayingCallback.cpp
 )
 
 # Creates and names a library, sets it as either STATIC

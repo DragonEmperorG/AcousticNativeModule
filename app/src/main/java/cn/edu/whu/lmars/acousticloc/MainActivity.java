@@ -1,15 +1,21 @@
 package cn.edu.whu.lmars.acousticloc;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import cn.edu.whu.lmars.acousticlocsdk.AcousticsEngine;
+
+import static android.app.PendingIntent.getActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +51,53 @@ public class MainActivity extends AppCompatActivity {
         });
 
         AcousticsEngine.create();
+    }
+
+    public void completeRecordAudio(View view) {
+        Log.d(TAG, "Complete recording audio");
+
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Chain together various setter methods to set the dialog characteristics
+        builder.setTitle(R.string.save_record_audio_dialog_title);
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.save_record_audio_dialog_neutral_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+        builder.setNeutralButton(R.string.save_record_audio_dialog_negative_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        builder.setNegativeButton(R.string.save_record_audio_dialog_negative_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+
+        // Get the AlertDialog from create()
+        AlertDialog savingRecordDialog = builder.create();
+
+
+    }
+
+    @Override
+    protected void onResume() {
+
+        Log.d(TAG, "onResume: ");
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        Log.d(TAG, "onDestroy: ");
+        super.onDestroy();
+        AcousticsEngine.delete();
     }
 
     private void startRecordAudio() {

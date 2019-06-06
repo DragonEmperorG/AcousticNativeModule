@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SIMPLESYNTH_TRACE_H
-#define SIMPLESYNTH_TRACE_H
+#ifndef ACOUSTICNATIVEMODULE_TRACE_H
+#define ACOUSTICNATIVEMODULE_TRACE_H
 
 class Trace {
 
@@ -30,4 +30,4 @@ private:
   static bool has_error_been_shown_;
 };
 
-#endif //SIMPLESYNTH_TRACE_H
+#endif //ACOUSTICNATIVEMODULE_TRACE_H
