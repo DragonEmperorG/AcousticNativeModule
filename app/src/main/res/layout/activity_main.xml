@@ -39,8 +39,7 @@
                 android:id="@+id/button_audio_recorder_tag"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/ic_bookmark_red_a700_24dp"
-                android:onClick="completeRecordAudio" />
+                android:background="@drawable/ic_bookmark_red_a700_24dp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
