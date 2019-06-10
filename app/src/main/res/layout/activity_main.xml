@@ -4,15 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cn.edu.whu.lmars.acousticloc.MainActivity">
+    tools:context="cn.edu.whu.lmars.acousticloc.MainActivity"
+    tools:visibility="visible">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="158dp"
+        android:layout_marginTop="360dp"
+        android:layout_marginEnd="159dp"
+        android:layout_marginBottom="8dp"
         android:text="Hello World!"
+        app:layout_constraintBottom_toTopOf="@+id/recorderControlLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.509" />
+
+    <cn.edu.whu.lmars.acousticloc.audio.wave.AudioWaveSurfaceView
+        android:id="@+id/view_surface_audio_wave"
+        android:layout_width="fill_parent"
+        android:layout_height="360dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,17 +41,19 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintBottom_toBottomOf="parent" >
+        app:layout_constraintStart_toStartOf="parent">
+
         <LinearLayout
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content">
+            android:gravity="center">
 
             <Button
                 android:id="@+id/button_audio_recorder_tag"
@@ -41,26 +61,30 @@
                 android:layout_height="48dp"
                 android:background="@drawable/ic_bookmark_red_a700_24dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content">
-                <ToggleButton
-                    android:id="@+id/button_toggle_audio_recorder"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:background="@drawable/toggle_button_recording_pause"
-                    android:checked="false"
-                    android:text=""
-                    android:textOff=""
-                    android:textOn="" />
+            android:gravity="center">
+
+            <ToggleButton
+                android:id="@+id/button_toggle_audio_recorder"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/toggle_button_recording_pause"
+                android:checked="false"
+                android:text=""
+                android:textOff=""
+                android:textOn="" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content">
+            android:gravity="center">
+
             <Button
                 android:id="@+id/button_audio_recorder_complete"
                 android:layout_width="48dp"

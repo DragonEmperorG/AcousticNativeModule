@@ -36,8 +36,11 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     void setRecordingDeviceId(int32_t deviceId);
     void setPlaybackDeviceId(int32_t deviceId);
     void setEffectOn(bool isOn);
-    void setRecordAudioOn(bool isRecordAudioOn);
-
+    void initialRecordAudio();
+    void startRecordAudio();
+    void stopRecordAudio();
+    void closeRecordAudio();
+    void saveRecordAudio(const char* filePath);
 
     /*
      * oboe::AudioStreamCallback interface implementation
@@ -54,7 +57,6 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     const char* TAG = "AcousticsEngine:: %s";
 
     bool mIsEffectOn = false;
-    bool mIsRecordAudioOn = false;
 
     /*
      * Audio Streams
@@ -122,9 +124,6 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     SndfileHandle sndfileHandle;
 
     std::mutex mRestartingLock;
-
-    void startRecordAudio();
-    void stopRecordAudio();
 
     void openRecordingStream();
     void closeRecordingStream();

@@ -28,9 +28,9 @@ public:
     void readFileInfo(const char * fileName);
 
     bool isFull() const { return (mWriteIndex == kMaxSamples); };
-    void setReadPositionToStart() { mReadIndex = 0; };
-    void clear() { mWriteIndex = 0; };
+    void clear() { mWriteIndex = 0; mDataFormatI16 = new int16_t[kMaxSamples]{0}; mTotalSamples = 0;};
     void setLooping(bool isLooping) { mIsLooping = isLooping; };
+    void setReadPositionToStart() { mReadIndex = 0; };
     int32_t getLength() const { return mWriteIndex; };
     int32_t getTotalSamples() const { return mTotalSamples; };
     static const int32_t getMaxSamples() { return kMaxSamples; };

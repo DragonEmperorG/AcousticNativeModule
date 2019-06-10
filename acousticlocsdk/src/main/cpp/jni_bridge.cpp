@@ -21,6 +21,7 @@
 static const int kOboeApiAAudio = 0;
 static const int kOboeApiOpenSLES = 1;
 
+const char *TAG = "jni_bridge:: %s";
 static AcousticsEngine *engine = nullptr;
 
 extern "C" {
@@ -125,8 +126,8 @@ Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_isAAudioSupported(
 }
 
 JNIEXPORT void JNICALL
-Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_setRecordAudioOn(
-        JNIEnv *env, jclass, jboolean isRecordAudioOn) {
+Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_initialRecordAudio(
+        JNIEnv *env, jclass) {
     if (engine == nullptr) {
         LOGE(
                 "Engine is null, you must call createEngine before calling this "
@@ -135,6 +136,67 @@ Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_setRecordAudioOn(
     }
 
     LOGD("engine->setRecordAudioOn(isRecordAudioOn);");
-    engine->setRecordAudioOn(isRecordAudioOn);
+    engine->initialRecordAudio();
+}
+
+JNIEXPORT void JNICALL
+Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_startRecordAudio(
+        JNIEnv *env, jclass) {
+    if (engine == nullptr) {
+        LOGE(
+                "Engine is null, you must call createEngine before calling this "
+                "method");
+        return;
+    }
+
+    LOGD("engine->setRecordAudioOn(isRecordAudioOn);");
+    engine->startRecordAudio();
+}
+
+JNIEXPORT void JNICALL
+Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_pauseRecordAudio(
+        JNIEnv *env, jclass) {
+    if (engine == nullptr) {
+        LOGE(
+                "Engine is null, you must call createEngine before calling this "
+                "method");
+        return;
+    }
+
+    LOGD("engine->setRecordAudioOn(isRecordAudioOn);");
+    engine->stopRecordAudio();
+}
+
+JNIEXPORT void JNICALL
+Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_stopRecordAudio(
+        JNIEnv *env, jclass) {
+    if (engine == nullptr) {
+        LOGE(
+                "Engine is null, you must call createEngine before calling this "
+                "method");
+        return;
+    }
+
+    LOGD("engine->setRecordAudioOn(isRecordAudioOn);");
+    engine->closeRecordAudio();
+}
+
+JNIEXPORT void JNICALL
+Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_saveRecordAudio(
+        JNIEnv *env, jclass, jstring filePath) {
+    LOGD(TAG, "writeFile(): filePath = ");
+    LOGD(TAG, filePath);
+
+    if (engine == nullptr) {
+        LOGE(
+                "Engine is null, you must call createEngine before calling this "
+                "method");
+        return;
+    }
+
+    const char *path;
+    path = env->GetStringUTFChars(filePath, nullptr);
+    engine->saveRecordAudio(path);
+    env->ReleaseStringUTFChars(filePath, path);
 }
 }

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
 import android.support.v4.app.ActivityCompat;
 
 import android.os.Bundle;
@@ -12,12 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ToggleButton;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -29,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     private static final int AUDIO_EFFECT_REQUEST = 0;
 
+    private boolean isNewRecord = true;
     private boolean isRecording = false;
+    private boolean recordingStatusPrevComplete = false;
 
     private ToggleButton toggleAudioRecorderButton;
     private View savingRecordView;
@@ -44,21 +47,35 @@ public class MainActivity extends AppCompatActivity {
         toggleAudioRecorderButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d(TAG, "Current toggleAudioRecorderButton Status: " + isChecked );
                 if(isChecked){
                     //
                     toggleAudioRecorderButton.setChecked(true);
-                    Log.d(TAG, "StartRecordAudio toggleAudioRecorderButton Status: true");
-                    startRecordAudio();
+
+                    if (isNewRecord) {
+                        AcousticsEngine.initialRecordAudio();
+                        isNewRecord = false;
+                    } else {
+                        startRecordAudio();
+                    }
+
+                    recordingStatusPrevComplete = true;
                 }
                 else{
                     //
                     toggleAudioRecorderButton.setChecked(false);
                     Log.d(TAG, "StopRecordAudio toggleAudioRecorderButton Status: false");
-                    stopRecordAudio();
+                    pauseRecordAudio();
+                    recordingStatusPrevComplete = false;
                 }
             }
         });
+
+        if (!isRecordPermissionGranted()){
+            requestRecordPermission();
+            return;
+        }
+
+
 
         AcousticsEngine.create();
     }
@@ -66,28 +83,11 @@ public class MainActivity extends AppCompatActivity {
     public void completeRecordAudio(View view) {
         Log.d(TAG, "Complete recording audio");
 
-
         if (isRecording) {
-
-        } else {
-
+            pauseRecordAudio();
         }
 
-        AlertDialog savingRecordDialog = onCreateSavingRecordDialog();
-//        savingRecordDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-//        savingRecordDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//            public void onShow(DialogInterface dialog) {
-//                if (savingRecordEditText != null) {
-//                    savingRecordEditText.setFocusable(true);
-//                    savingRecordEditText.setFocusableInTouchMode(true);
-//                    savingRecordEditText.requestFocus();
-//
-//
-//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.showSoftInput(savingRecordEditText, InputMethodManager.SHOW_IMPLICIT);
-//                }
-//            }
-//        });
+        onCreateSavingRecordDialog();
 
     }
 
@@ -105,8 +105,16 @@ public class MainActivity extends AppCompatActivity {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         savingRecordView = inflater.inflate(R.layout.dialog_saving_record, null);
+
+        /*
+         * Set Customized EditText
+         */
         String mSavingRecordFileName = getCustomTimeStamp();
+
+        // Get the EditText by Inflated View
         savingRecordEditText = savingRecordView.findViewById(R.id.edit_text_saving_record);
+
+        // Set default record file name
         savingRecordEditText.setText(mSavingRecordFileName.toCharArray(), 0, mSavingRecordFileName.length());
         savingRecordEditText.setSelectAllOnFocus(true);
         savingRecordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -128,11 +136,17 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.save_record_audio_dialog_positive_button_text, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked SAVE button
-
+                AcousticsEngine.stopRecordAudio();
+                AcousticsEngine.saveRecordAudio(getAudioRecordingFilePath(MainActivity.this, savingRecordEditText.getText().toString()));
+                isNewRecord = true;
             }
         });
         builder.setNeutralButton(R.string.save_record_audio_dialog_neutral_button_text, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+
+                if (recordingStatusPrevComplete) {
+                    startRecordAudio();
+                }
                 // User cancelled the dialog
                 dialog.cancel();
             }
@@ -140,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.save_record_audio_dialog_negative_button_text, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked DELETE button
+                AcousticsEngine.stopRecordAudio();
+
+
+                isNewRecord = true;
             }
         });
 
@@ -153,6 +171,33 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat customDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
         Date mDate = new Date();
         return customDateFormat.format(mDate);
+    }
+
+    private String getAudioRecordingFilePath(Context context, String recordFileName) {
+
+        File recordFileDirectory = new File(context.getExternalFilesDir(null), "AudioLMARS");
+        if (!recordFileDirectory.exists()) {
+            boolean directoryCreationStatus = recordFileDirectory.mkdirs();
+            Log.i(TAG, "getAudioRecordingFilePath: directoryCreationStatus: " + directoryCreationStatus);
+        }
+
+        File recordFilePath = new File(recordFileDirectory, recordFileName + ".wav");
+
+        if (recordFilePath.exists()) {
+            boolean deletionStatus = recordFilePath.delete();
+            Log.i(TAG, "getAudioRecordingFilePath: File already exists, delete it first, deletionStatus: " + deletionStatus);
+        }
+
+        if (!recordFilePath.exists()) {
+            try {
+                boolean deletionStatus = recordFilePath.createNewFile();
+                Log.i(TAG, "getAudioRecordingFilePath: fileCreationStatus: " + deletionStatus);
+            } catch (Exception e) {
+                Log.i(TAG, "getAudioRecordingFilePath: createNewFile failed: " + e.toString());
+            }
+        }
+
+        return recordFilePath.getAbsolutePath();
     }
 
     @Override
@@ -173,21 +218,22 @@ public class MainActivity extends AppCompatActivity {
     private void startRecordAudio() {
         Log.d(TAG, "Attempting to start");
 
-        if (!isRecordPermissionGranted()){
-            requestRecordPermission();
-            return;
-        }
-
+        AcousticsEngine.startRecordAudio();
         isRecording = true;
-        AcousticsEngine.setRecordAudioOn(true);
+    }
 
+    private void pauseRecordAudio() {
+        Log.d(TAG, "Attempting to pause");
+
+        AcousticsEngine.pauseRecordAudio();
+        isRecording = false;
     }
 
     private void stopRecordAudio() {
         Log.d(TAG, "Playing, attempting to stop");
 
-        isRecording = false;
-        AcousticsEngine.setRecordAudioOn(false);
+
+
 
     }
 

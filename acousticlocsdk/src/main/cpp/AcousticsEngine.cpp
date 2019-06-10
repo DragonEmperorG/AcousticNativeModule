@@ -392,16 +392,13 @@ void AcousticsEngine::onErrorAfterClose(oboe::AudioStream *oboeStream,
          oboe::convertToText(error));
 }
 
-void AcousticsEngine::setRecordAudioOn(bool isRecordAudioOn) {
-    if (isRecordAudioOn != mIsRecordAudioOn) {
-        mIsRecordAudioOn = isRecordAudioOn;
+void AcousticsEngine::initialRecordAudio() {
 
-        if (isRecordAudioOn) {
-            startRecordAudio();
-        } else {
-            stopRecordAudio();
-        }
-    }
+    LOGD(TAG, "initialRecordAudio(): ");
+
+    openRecordingStream();
+    startRecordAudio();
+
 }
 
 /**
@@ -413,8 +410,6 @@ void AcousticsEngine::setRecordAudioOn(bool isRecordAudioOn) {
 void AcousticsEngine::startRecordAudio() {
 
     LOGD(TAG, "startRecording(): ");
-
-    openRecordingStream();
 
     if (mRecordingStream) {
         startStream(mRecordingStream);
@@ -460,7 +455,32 @@ void AcousticsEngine::stopRecordAudio() {
     LOGD(TAG, "stopRecordAudio(): ");
 
     stopStream(mRecordingStream);
+}
+
+/**
+ * Close Recording Audio
+ */
+void AcousticsEngine::closeRecordAudio() {
+
+    LOGD(TAG, "closeRecordAudio(): ");
+
+    stopStream(mRecordingStream);
+
     closeRecordingStream();
+
+    mRecordingStream = nullptr;
+
+    mSoundRecording.clear();
+}
+
+/**
+ * Close Recording Audio
+ */
+void AcousticsEngine::saveRecordAudio(const char* filePath) {
+
+    LOGD(TAG, "saveRecordAudio(): ");
+
+    mSoundRecording.initiateWritingToFile(filePath, mInputChannelCount, mSampleRate);
 }
 
 /**
