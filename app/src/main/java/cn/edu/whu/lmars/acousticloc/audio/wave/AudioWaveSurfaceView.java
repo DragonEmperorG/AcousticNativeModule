@@ -2,9 +2,7 @@ package cn.edu.whu.lmars.acousticloc.audio.wave;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -32,9 +30,6 @@ public class AudioWaveSurfaceView extends SurfaceView implements SurfaceHolder.C
     private int mBackgroundColor;
     private int mCenterLineColor;
 
-    // Child Thread Tag
-    private boolean mIsDrawing;
-
     public AudioWaveSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // Initial member variables
@@ -53,9 +48,10 @@ public class AudioWaveSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        // Initial Audio Wave Coordinate
-        mIsDrawing = true;
-        // Start Child Thread
+        /*
+         * Initial Audio Wave Coordinate
+         * Start Child Thread
+        */
         initialAudioWaveCoordinateFrame(this);
 
     }
@@ -78,7 +74,7 @@ public class AudioWaveSurfaceView extends SurfaceView implements SurfaceHolder.C
                 mPaint = new Paint();
                 mPaint.setColor(mCenterLineColor);
                 Log.d(TAG, "mCanvasWidth: " + mCanvasWidth);
-                Log.d(TAG, "mCanvasHeight: " + mCanvasWidth);
+                Log.d(TAG, "mCanvasHeight: " + mCanvasHeight);
                 mCanvas.drawLine(0, mCanvasHeight * 0.5F, mCanvasWidth, mCanvasHeight * 0.5F, mPaint);
 
                 mSurfaceHolder.unlockCanvasAndPost(mCanvas);

@@ -199,4 +199,25 @@ Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_saveRecordAudio(
     engine->saveRecordAudio(path);
     env->ReleaseStringUTFChars(filePath, path);
 }
+
+JNIEXPORT jshortArray JNICALL
+Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_readPaintRecordAudioWaveBuffer(
+        JNIEnv *env, jclass, jint offsetInShorts, jint sizeInShorts) {
+    LOGD(TAG, "readPaintRecordAudioWaveBuffer(): ");
+
+    jshortArray waveShortArray = env->NewShortArray(sizeInShorts);
+
+    if (engine == nullptr) {
+        LOGE(
+                "Engine is null, you must call createEngine before calling this "
+                "method");
+        return waveShortArray;
+    }
+
+    int16_t * waveShortBuffer = engine->readPaintRecordAudioWaveBuffer(offsetInShorts, sizeInShorts);
+    env->SetShortArrayRegion(waveShortArray, 0, sizeInShorts, waveShortBuffer);
+
+
+    return waveShortArray;
+}
 }

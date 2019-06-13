@@ -41,6 +41,7 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     void stopRecordAudio();
     void closeRecordAudio();
     void saveRecordAudio(const char* filePath);
+    int16_t* readPaintRecordAudioWaveBuffer(int offsetInShorts, int sizeInShorts);
 
     /*
      * oboe::AudioStreamCallback interface implementation
@@ -95,16 +96,18 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     /*
      * Sample Format
      */
-    oboe::AudioFormat mFormat = oboe::AudioFormat::I16;
+    oboe::AudioFormat mFormat = oboe::AudioFormat::Float;
+//    oboe::AudioFormat mFormat = oboe::AudioFormat::I16;
     /*
      * Samples Per Frame
      */
-    int32_t mInputChannelCount = oboe::ChannelCount::Stereo;
+    int32_t mInputChannelCount = oboe::ChannelCount::Mono;
     int32_t mOutputChannelCount = oboe::ChannelCount::Stereo;
     /*
      * Sample Rate
      */
-    int32_t mSampleRate = oboe::kUnspecified;
+//    int32_t mSampleRate = oboe::kUnspecified;
+    int32_t mSampleRate = 44100 * 4 ;
 
     uint64_t mProcessedFrameCount = 0;
     uint64_t mSystemStartupFrames = 0;

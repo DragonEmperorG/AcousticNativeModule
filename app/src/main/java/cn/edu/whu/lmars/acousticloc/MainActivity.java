@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import cn.edu.whu.lmars.acousticloc.audio.wave.AudioWavePainter;
 import cn.edu.whu.lmars.acousticlocsdk.AcousticsEngine;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private ToggleButton toggleAudioRecorderButton;
     private View savingRecordView;
     private EditText savingRecordEditText;
+
+    private AudioWavePainter audioWavePainter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.save_record_audio_dialog_positive_button_text, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked SAVE button
-                AcousticsEngine.stopRecordAudio();
                 AcousticsEngine.saveRecordAudio(getAudioRecordingFilePath(MainActivity.this, savingRecordEditText.getText().toString()));
+                AcousticsEngine.stopRecordAudio();
                 isNewRecord = true;
             }
         });

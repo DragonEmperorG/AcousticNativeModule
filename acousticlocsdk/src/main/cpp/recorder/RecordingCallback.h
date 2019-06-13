@@ -29,7 +29,10 @@ public:
     onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames);
 
     oboe::DataCallbackResult
-    processRecordingFrames(oboe::AudioStream *audioStream, int16_t *audioData, int32_t numFrames);
+    processFormatI16RecordingFrames(oboe::AudioStream *audioStream, int16_t *audioData, int32_t numSamples);
+
+    oboe::DataCallbackResult
+    processFormatFloatRecordingFrames(oboe::AudioStream *audioStream, float_t *audioData, int32_t numSamples);
 };
 
 #endif //ACOUSTICNATIVEMODULE_RECORDINGCALLBACK_H

@@ -21,5 +21,6 @@ public enum AcousticsEngine {
     public static native void saveRecordAudio(String recordAudioFilePath);
     public static native void setRecordingDeviceId(int deviceId);
     public static native void setPlaybackDeviceId(int deviceId);
+    public static native short[] readPaintRecordAudioWaveBuffer(int offsetInShorts, int sizeInShorts);
     public static native void delete();
 }

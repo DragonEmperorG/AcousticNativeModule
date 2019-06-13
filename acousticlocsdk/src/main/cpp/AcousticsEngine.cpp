@@ -28,10 +28,11 @@
 const float kSystemWarmupTime = 0.5f;
 
 AcousticsEngine::AcousticsEngine() {
-    assert(mOutputChannelCount == mInputChannelCount);
+//    assert(mOutputChannelCount == mInputChannelCount);
 }
 
 AcousticsEngine::~AcousticsEngine() {
+
     stopStream(mPlayStream);
 
     stopStream(mRecordingStream);
@@ -126,6 +127,8 @@ void AcousticsEngine::openRecordingStream() {
     oboe::AudioStreamBuilder builder;
 
     setupRecordingStreamParameters(&builder);
+
+    mSoundRecording.setStartRecordingTimeStamp();
 
     // Now that the parameters are set up we can open the stream
     oboe::Result result = builder.openStream(&mRecordingStream);
@@ -397,6 +400,7 @@ void AcousticsEngine::initialRecordAudio() {
     LOGD(TAG, "initialRecordAudio(): ");
 
     openRecordingStream();
+    mSoundRecording.initialSignalDetectionConfig(mFormat, mInputChannelCount, mSampleRate);
     startRecordAudio();
 
 }
@@ -480,7 +484,7 @@ void AcousticsEngine::saveRecordAudio(const char* filePath) {
 
     LOGD(TAG, "saveRecordAudio(): ");
 
-    mSoundRecording.initiateWritingToFile(filePath, mInputChannelCount, mSampleRate);
+    mSoundRecording.initiateWritingToFile(filePath, mFormat, mInputChannelCount, mSampleRate);
 }
 
 /**
@@ -496,5 +500,16 @@ void AcousticsEngine::closeRecordingStream() {
         mRecordingStream = nullptr;
     }
 
+}
+
+/**
+ * Read record audio wave Data stored in memory to paint.
+ * @param stream the stream to close
+ */
+int16_t* AcousticsEngine::readPaintRecordAudioWaveBuffer(int offsetInShorts, int sizeInShorts) {
+
+    LOGD(TAG, "readPaintRecordAudioWaveBuffer(): ");
+
+    return mSoundRecording.readMData2Paint(offsetInShorts, sizeInShorts);
 
 }
