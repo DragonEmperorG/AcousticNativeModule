@@ -89,7 +89,7 @@ public class AudioWavePainter {
                 float[] tempBuffer = new float[tRecordingBufSize];
                 while (mIsPainting) {
                     mPaintBufferSize = AcousticsEngine.readPaintRecordAudioWaveBuffer(tempBuffer, 0, tRecordingBufSize);
-                    Log.i(TAG, "doInBackground: paintBufferSize = " + mPaintBufferSize);
+                    Log.d(TAG, "doInBackground: paintBufferSize = " + mPaintBufferSize);
                     synchronized (mAudioBuffer) {
                         for (int i = 0; i < mPaintBufferSize; i += mPaintDownSamplingRate) {
                             mAudioBuffer.add(tempBuffer[i]);
@@ -112,6 +112,8 @@ public class AudioWavePainter {
                 ArrayList<Float> updateBuffer = new ArrayList<>();
                 Log.i(TAG, "onProgressUpdate: " + mAudioBuffer.size());
                 synchronized (mAudioBuffer) {
+                    Log.i(TAG, "mAudioBuffer: ");
+                    Log.i(TAG, mAudioBuffer.toString());
                     if (mAudioBuffer.size() == 0)
                         return;
                     while(mAudioBuffer.size() > tSurfaceView.getWidth() / mPixelPerSample){

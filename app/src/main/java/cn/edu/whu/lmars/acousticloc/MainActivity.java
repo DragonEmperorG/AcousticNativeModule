@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isRecording = false;
     private boolean recordingStatusPrevComplete = false;
 
-    private int mRecordBufSize = 1024;
+    private int mRecordBufSize = 128;
 
     private ToggleButton toggleAudioRecorderButton;
     private View savingRecordView;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (isNewRecord) {
                         AcousticsEngine.initialRecordAudio();
-                        audioWavePainter.startPaintAudioWave(mRecordBufSize, audioWavePainterSurfaceView);
+//                        audioWavePainter.startPaintAudioWave(mRecordBufSize, audioWavePainterSurfaceView);
                         isNewRecord = false;
                     } else {
                         startRecordAudio();
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isRecording) {
             pauseRecordAudio();
+            isRecording =false;
         }
 
         onCreateSavingRecordDialog();
@@ -156,7 +157,10 @@ public class MainActivity extends AppCompatActivity {
                 // User clicked SAVE button
                 AcousticsEngine.saveRecordAudio(getAudioRecordingFilePath(MainActivity.this, savingRecordEditText.getText().toString()));
                 AcousticsEngine.stopRecordAudio();
+                isRecording = false;
                 isNewRecord = true;
+                toggleAudioRecorderButton.setChecked(false);
+
             }
         });
         builder.setNeutralButton(R.string.save_record_audio_dialog_neutral_button_text, new DialogInterface.OnClickListener() {
@@ -164,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (recordingStatusPrevComplete) {
                     startRecordAudio();
+                    isRecording = true;
                 }
                 // User cancelled the dialog
                 dialog.cancel();
@@ -174,8 +179,9 @@ public class MainActivity extends AppCompatActivity {
                 // User clicked DELETE button
                 AcousticsEngine.stopRecordAudio();
 
-
+                isRecording = false;
                 isNewRecord = true;
+                toggleAudioRecorderButton.setChecked(false);
             }
         });
 
@@ -244,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Attempting to pause");
 
         AcousticsEngine.pauseRecordAudio();
-        audioWavePainter.pausePaintAudioWave();
+//        audioWavePainter.pausePaintAudioWave();
         isRecording = false;
     }
 

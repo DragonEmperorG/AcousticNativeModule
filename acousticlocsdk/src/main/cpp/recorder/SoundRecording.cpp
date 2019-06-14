@@ -346,7 +346,7 @@ bool SoundRecording::updateSlideWindow() {
                 mSlideWindowIndex++;
             }
             isUpdate = true;
-            LOGI(TAG, "Updated Slide Window");
+            LOGD(TAG, "Updated Slide Window");
         }
     }
 
@@ -356,7 +356,7 @@ bool SoundRecording::updateSlideWindow() {
 
 int32_t SoundRecording::readMData2Paint(float *audioData, int32_t offsetInShorts, int32_t sizeInShorts) {
 
-    LOGD(TAG, "readMData2Paint(): ");
+    LOGI(TAG, "readMData2Paint(): ");
 
     int32_t numAudioData = 0;
 
@@ -367,6 +367,10 @@ int32_t SoundRecording::readMData2Paint(float *audioData, int32_t offsetInShorts
         }
     }
 
+    LOGI(TAG, "mTotalSamples= ");
+    LOGI(TAG, std::to_string(mTotalSamples).c_str());
+    LOGI(TAG, "mPaintIndex= ");
+    LOGI(TAG, std::to_string(mPaintIndex).c_str());
     LOGI(TAG, "numAudioData= ");
     LOGI(TAG, std::to_string(numAudioData).c_str());
 

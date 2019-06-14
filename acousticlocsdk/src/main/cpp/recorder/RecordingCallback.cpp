@@ -31,11 +31,13 @@ RecordingCallback::processFormatFloatRecordingFrames(oboe::AudioStream *audioStr
 
 //    LOGD(TAG, "processFormatFloatRecordingFrames(): ");
 
-    int32_t framesWritten = mSoundRecording->writeFormatFloat(audioData, numSamples);
+    mSoundRecording->writeFormatFloat(audioData, numSamples);
+//    int32_t framesWritten = mSoundRecording->writeFormatFloat(audioData, numSamples);
 //    LOGD(TAG, "numSamples = ");
 //    LOGD(TAG, std::to_string(framesWritten).c_str());
 
-    bool isUpdateSlideWindow = mSoundRecording->updateSlideWindow();
+    mSoundRecording->updateSlideWindow();
+//    bool isUpdateSlideWindow = mSoundRecording->updateSlideWindow();
 //    if (isUpdateSlideWindow)
 //        LOGD(TAG, "isUpdateSlideWindow = true");
 //    else
