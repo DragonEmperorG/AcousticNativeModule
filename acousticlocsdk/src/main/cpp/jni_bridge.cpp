@@ -200,24 +200,27 @@ Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_saveRecordAudio(
     env->ReleaseStringUTFChars(filePath, path);
 }
 
-JNIEXPORT jshortArray JNICALL
+JNIEXPORT jint JNICALL
 Java_cn_edu_whu_lmars_acousticlocsdk_AcousticsEngine_readPaintRecordAudioWaveBuffer(
-        JNIEnv *env, jclass, jint offsetInShorts, jint sizeInShorts) {
-    LOGD(TAG, "readPaintRecordAudioWaveBuffer(): ");
+        JNIEnv *env, jclass, jfloatArray buffer, jint offsetInShorts, jint sizeInShorts) {
 
-    jshortArray waveShortArray = env->NewShortArray(sizeInShorts);
+    LOGD(TAG, "readPaintRecordAudioWaveBuffer(): ");
+    jint readBufferLength = 0;
 
     if (engine == nullptr) {
         LOGE(
                 "Engine is null, you must call createEngine before calling this "
                 "method");
-        return waveShortArray;
+        return readBufferLength;
     }
 
-    int16_t * waveShortBuffer = engine->readPaintRecordAudioWaveBuffer(offsetInShorts, sizeInShorts);
-    env->SetShortArrayRegion(waveShortArray, 0, sizeInShorts, waveShortBuffer);
+    jfloat* readBuffer;
+    readBuffer = env->GetFloatArrayElements(buffer, 0);
+    readBufferLength = engine->readPaintRecordAudioWaveBuffer(readBuffer, offsetInShorts, sizeInShorts);
 
+    jint mode = 0;
+    env->ReleaseFloatArrayElements(buffer, readBuffer, mode);
 
-    return waveShortArray;
+    return readBufferLength;
 }
 }

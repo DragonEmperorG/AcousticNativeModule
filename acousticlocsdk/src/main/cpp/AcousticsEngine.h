@@ -41,7 +41,7 @@ class AcousticsEngine : public oboe::AudioStreamCallback {
     void stopRecordAudio();
     void closeRecordAudio();
     void saveRecordAudio(const char* filePath);
-    int16_t* readPaintRecordAudioWaveBuffer(int offsetInShorts, int sizeInShorts);
+    int32_t readPaintRecordAudioWaveBuffer(float *audioData, int32_t offsetInShorts, int32_t sizeInShorts);
 
     /*
      * oboe::AudioStreamCallback interface implementation

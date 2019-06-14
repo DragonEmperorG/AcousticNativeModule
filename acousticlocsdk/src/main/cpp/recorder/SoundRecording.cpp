@@ -326,16 +326,11 @@ void SoundRecording::initialSignalDetectionConfig(oboe::AudioFormat sampleFormat
 void SoundRecording::setStartRecordingTimeStamp() {
     struct timeval xTime;
     gettimeofday(&xTime, NULL);
-    auto tv_sec = xTime.tv_sec;
-    auto tv_usec = xTime.tv_usec;
-    auto automStartRecordingTimeStamp = tv_sec * 1000000 + tv_usec;
-    LOGI(TAG, "automStartRecordingTimeStamp = ");
-    LOGI(TAG, std::to_string(automStartRecordingTimeStamp).c_str());
-    mStartRecordingTimeStamp = (long)(tv_sec * 1000000 + tv_usec);
+    auto tv_sec = (long long)xTime.tv_sec;
+    auto tv_usec = (long long)xTime.tv_usec;
+    mStartRecordingTimeStamp = tv_sec * 1000000 + tv_usec;
     LOGI(TAG, "mStartRecordingTimeStamp = ");
-    LOGI(TAG, std::to_string(mSlideWindowBufferLength).c_str());
-    LOGI(TAG, std::to_string(tv_sec).c_str());
-    LOGI(TAG, std::to_string(tv_usec).c_str());
+    LOGI(TAG, std::to_string(mStartRecordingTimeStamp).c_str());
 
 //    std::string year = std::to_string(xTime.);
 }
@@ -350,6 +345,7 @@ bool SoundRecording::updateSlideWindow() {
                 mSigDetectSlideWindowFF[i] = mDataFormatFloat[mSlideWindowIndex + mSlideWindowBufferLength];
                 mSlideWindowIndex++;
             }
+            isUpdate = true;
             LOGI(TAG, "Updated Slide Window");
         }
     }
@@ -358,17 +354,21 @@ bool SoundRecording::updateSlideWindow() {
 }
 
 
-int16_t* SoundRecording::readMData2Paint(int offsetInShorts, int sizeInShorts) {
+int32_t SoundRecording::readMData2Paint(float *audioData, int32_t offsetInShorts, int32_t sizeInShorts) {
 
     LOGD(TAG, "readMData2Paint(): ");
 
-    int16_t* paintData = new int16_t[sizeInShorts] { 0 };
+    int32_t numAudioData = 0;
 
     if (mPaintIndex + sizeInShorts < mTotalSamples) {
         for (int i = 0; i < sizeInShorts; ++i) {
-            paintData[i] = mDataFormatI16[mPaintIndex++];
+            audioData[i] = mDataFormatFloat[mPaintIndex++];
+            numAudioData++;
         }
     }
 
-    return paintData;
+    LOGI(TAG, "numAudioData= ");
+    LOGI(TAG, std::to_string(numAudioData).c_str());
+
+    return numAudioData;
 }

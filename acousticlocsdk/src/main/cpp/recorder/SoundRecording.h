@@ -27,7 +27,7 @@ public:
     int32_t readFormatI16(int16_t *targetData, int32_t numSamples);
     int32_t readFormatFloat(float_t *targetData, int32_t numSamples);
 
-    int16_t* readMData2Paint(int offsetInShorts, int sizeInShorts);
+    int32_t readMData2Paint(float *audioData, int32_t offsetInShorts, int32_t sizeInShorts);
 
     SndfileHandle createFile(const char *outfilename, oboe::AudioFormat sampleFormat, int32_t outputChannels, int32_t sampleRate);
 
@@ -80,6 +80,8 @@ private:
     std::atomic<int32_t> mPaintIndex { 0 };
     std::atomic<int32_t> mSlideWindowIndex { 0 };
     std::atomic<int32_t> mTotalSamples { 0 };
+    // Start Recording Timestamp(μs)
+    std::atomic<long long> mStartRecordingTimeStamp { 0 };
     std::atomic<bool> mIsLooping { false };
 
     int16_t* mDataFormatI16 = new int16_t[kMaxSamples]{0};
@@ -90,8 +92,6 @@ private:
     // Signal Detection Slide Window Time Interval(ms)
     int32_t mSlideWindowTimeInterval = 50;
     int32_t mSlideWindowBufferLength;
-    // Start Recording Timestamp(μs)
-    long mStartRecordingTimeStamp = 0;
 
     // 6 Decibels gain on audio signal
     int16_t mGainFactor = 1;

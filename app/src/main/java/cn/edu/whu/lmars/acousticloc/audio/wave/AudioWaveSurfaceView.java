@@ -36,8 +36,8 @@ public class AudioWaveSurfaceView extends SurfaceView implements SurfaceHolder.C
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
 
-        mBackgroundColor = 0xFFEEEEEE;
-        mCenterLineColor = 0xFF424242;
+        mBackgroundColor = 0xFF000000;
+        mCenterLineColor = 0xFFACF2B4;
     }
 
     @Override

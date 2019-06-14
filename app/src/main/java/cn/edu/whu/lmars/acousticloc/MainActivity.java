@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
@@ -35,9 +36,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean isRecording = false;
     private boolean recordingStatusPrevComplete = false;
 
+    private int mRecordBufSize = 1024;
+
     private ToggleButton toggleAudioRecorderButton;
     private View savingRecordView;
     private EditText savingRecordEditText;
+    private SurfaceView audioWavePainterSurfaceView;
 
     private AudioWavePainter audioWavePainter;
 
@@ -56,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (isNewRecord) {
                         AcousticsEngine.initialRecordAudio();
+                        audioWavePainter.startPaintAudioWave(mRecordBufSize, audioWavePainterSurfaceView);
                         isNewRecord = false;
                     } else {
                         startRecordAudio();
@@ -73,14 +78,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        audioWavePainterSurfaceView = findViewById(R.id.view_surface_audio_wave);
+
         if (!isRecordPermissionGranted()){
             requestRecordPermission();
             return;
         }
 
-
-
         AcousticsEngine.create();
+        audioWavePainter = new AudioWavePainter();
     }
 
     public void completeRecordAudio(View view) {
@@ -91,6 +97,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         onCreateSavingRecordDialog();
+
+    }
+
+    public void addTag(View view) {
+        Log.d(TAG, "Add tag");
+
+//        int readBufferSize = 0;
+//        float[] tempBuffer = new float[6];
+//        readBufferSize = AcousticsEngine.readPaintRecordAudioWaveBuffer(tempBuffer, 0, 6);
 
     }
 
@@ -229,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Attempting to pause");
 
         AcousticsEngine.pauseRecordAudio();
+        audioWavePainter.pausePaintAudioWave();
         isRecording = false;
     }
 

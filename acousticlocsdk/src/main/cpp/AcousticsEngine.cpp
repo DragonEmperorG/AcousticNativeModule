@@ -506,10 +506,10 @@ void AcousticsEngine::closeRecordingStream() {
  * Read record audio wave Data stored in memory to paint.
  * @param stream the stream to close
  */
-int16_t* AcousticsEngine::readPaintRecordAudioWaveBuffer(int offsetInShorts, int sizeInShorts) {
+int32_t AcousticsEngine::readPaintRecordAudioWaveBuffer(float *audioData, int32_t offsetInShorts, int32_t sizeInShorts) {
 
     LOGD(TAG, "readPaintRecordAudioWaveBuffer(): ");
 
-    return mSoundRecording.readMData2Paint(offsetInShorts, sizeInShorts);
+    return mSoundRecording.readMData2Paint(audioData, offsetInShorts, sizeInShorts);
 
 }
